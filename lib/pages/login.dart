@@ -1,5 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
+import 'package:binomi/features/Auth/Applications/api_auth.dart';
+import 'package:binomi/pages/home.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -10,11 +12,51 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final ApiClient _apiClient = ApiClient();
+  bool _showPassword = false;
+
+  Future<void> loginUsers() async {
+    //show snackbar to indicate loading
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Processing Data'),
+      backgroundColor: Colors.green.shade300,
+    ));
+    await Future.delayed(Duration(seconds: 1));
+    Navigator.pushNamed(context, '/home');
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    //get response from ApiClient
+    // dynamic res = await _apiClient.login(
+    //   emailController.text,
+    //   passwordController.text,
+    // );
+    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    // //if there is no error, get the user's accesstoken and pass it to HomeScreen
+    // if (res['ErrorCode'] == null) {
+    //   String accessToken = res['access_token'];
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //           builder: (context) => Home(accesstoken: accessToken)));
+    // } else {
+    //   //if an error occurs, show snackbar with error message
+    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //     content: Text('Error: ${res['Message']}'),
+    //     backgroundColor: Colors.red.shade300,
+    //   ));
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -50,6 +92,7 @@ class _LoginState extends State<Login> {
                       ),
                       SizedBox(height: 60.0), // Space between login and inputs
                       TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           labelText: 'Email',
                           prefixIcon: Icon(Icons.email),
@@ -60,17 +103,30 @@ class _LoginState extends State<Login> {
                       SizedBox(
                           height: 20.0), // Space between email and password
                       TextField(
+                        controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'Password',
                           prefixIcon: Icon(Icons.password),
-                          suffixIcon: Icon(Icons.remove_red_eye_sharp),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() => _showPassword = !_showPassword);
+                            },
+                            child: Icon(
+                              _showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                          ),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0)),
                         ),
                       ),
                       SizedBox(height: 20.0), // Space between inputs and button
-                      SigninButton(),
+                      SigninButton(
+                        onPressed: loginUsers,
+                      ),
                       SizedBox(height: 20.0),
                       SignInDivider(),
                       SizedBox(height: 20.0),
@@ -159,28 +215,22 @@ class SocialMediaButtons extends StatelessWidget {
 }
 
 class SigninButton extends StatelessWidget {
-  const SigninButton({
-    super.key,
-  });
+  final VoidCallback onPressed;
+
+  const SigninButton({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: 50, // Align to bottom-center
+      height: 50,
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
-              Colors.black), // Background color
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          // Text color
         ),
-        onPressed: () {
-          Navigator.pushNamed(context, '/home');
-        },
-        child: const Text(
-          "Sign in",
-        ),
+        onPressed: onPressed,
+        child: const Text("Sign in"),
       ),
     );
   }

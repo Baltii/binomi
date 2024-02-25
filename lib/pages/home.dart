@@ -1,8 +1,10 @@
 import 'package:binomi/shared/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:binomi/features/Auth/Applications/api_auth.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final String accesstoken;
+  const Home({Key? key, required this.accesstoken}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -10,6 +12,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int selectedIndex = 0;
+  final ApiClient _apiClient = ApiClient();
+  Future<Map<String, dynamic>> getUserData() async {
+    dynamic userRes;
+    userRes = await _apiClient.getUserProfileData(widget.accesstoken);
+    return userRes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +34,7 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color:const Color(0xffEEEEEE),
+                        color: const Color(0xffEEEEEE),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -38,7 +46,7 @@ class _HomeState extends State<Home> {
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: 'Search...',
-                                 hintStyle: TextStyle(color: Color(0xff7D7F88)),
+                                hintStyle: TextStyle(color: Color(0xff7D7F88)),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -59,7 +67,6 @@ class _HomeState extends State<Home> {
                       height: 47.39,
                     ),
                   ),
-                
                 ],
               ),
             ),

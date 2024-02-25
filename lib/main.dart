@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:binomi/features/Auth/Applications/api_auth.dart';
 import 'package:binomi/features/annonces/pages/annonce-detail/annonce-detail.dart';
 import 'package:binomi/pages/home.dart';
 import 'package:device_preview/device_preview.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    //final ApiClient _apiClient = ApiClient();
     return MaterialApp(
       title: 'Binomi',
       theme: ThemeData(
@@ -36,8 +38,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => Welcome(),
         '/login': (context) => Login(),
-        '/home': (context) => Home(),
-        '/detail' : (context) => AnnonceDetail(),
+        '/home': (context) => Home(accesstoken: ''),
+        '/detail': (context) => AnnonceDetail(),
         // Add more routes as needed
       },
     );
