@@ -1,12 +1,19 @@
 // ignore_for_file: prefer_const_constructors
-
+import 'package:binomi/features/annonces/pages/annonce-detail/annonce-detail.dart';
+import 'package:binomi/pages/home.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:binomi/pages/login.dart';
 import 'package:binomi/pages/welcome.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    DevicePreview(
+      enabled: true,
+      builder: (context) => const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -29,6 +36,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => Welcome(),
         '/login': (context) => Login(),
+        '/home': (context) => Home(),
+        '/detail' : (context) => AnnonceDetail(),
         // Add more routes as needed
       },
     );

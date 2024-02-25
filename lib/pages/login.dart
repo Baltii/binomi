@@ -176,7 +176,7 @@ class SigninButton extends StatelessWidget {
           // Text color
         ),
         onPressed: () {
-          Navigator.pushNamed(context, '/');
+          Navigator.pushNamed(context, '/home');
         },
         child: const Text(
           "Sign in",
