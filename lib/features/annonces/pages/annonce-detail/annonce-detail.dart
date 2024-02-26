@@ -361,19 +361,18 @@ class _AnnonceDetailState extends State<AnnonceDetail> {
                     // Icône
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      
                       children: [
-                         Text(
+                        Text(
                           "Minimarket",
-                          style: TextStyle(color: Colors.black , fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
                         ),
-                         Text(
+                        Text(
                           "200m",
                           style: TextStyle(
-                              color: Color(0xff7D7F88), fontWeight: FontWeight.bold),
+                              color: Color(0xff7D7F88),
+                              fontWeight: FontWeight.bold),
                         ),
-
-
                       ],
                     )
                     // Texte

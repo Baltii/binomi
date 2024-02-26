@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
-import 'package:binomi/features/Auth/Applications/api_auth.dart';
-import 'package:binomi/pages/home.dart';
+import 'package:binomi/features/Auth/services/api_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
   final ApiClient _apiClient = ApiClient();
   bool _showPassword = false;
+  final storage = new FlutterSecureStorage();
 
   Future<void> loginUsers() async {
     //show snackbar to indicate loading
@@ -33,11 +34,12 @@ class _LoginState extends State<Login> {
     //   emailController.text,
     //   passwordController.text,
     // );
+
     // ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     // //if there is no error, get the user's accesstoken and pass it to HomeScreen
     // if (res['ErrorCode'] == null) {
-    //   String accessToken = res['access_token'];
+    // await storage.write(key: 'token', value: res.token);
     //   Navigator.push(
     //       context,
     //       MaterialPageRoute(
