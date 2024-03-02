@@ -1,7 +1,10 @@
+import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:flutter/material.dart';
 
 class ScrollCardHorizontal extends StatefulWidget {
-  const ScrollCardHorizontal({Key? key}) : super(key: key);
+  final List<Annonce> annonces;
+  const ScrollCardHorizontal({Key? key, required this.annonces})
+      : super(key: key);
 
   @override
   _ScrollCardHorizontalState createState() => _ScrollCardHorizontalState();
@@ -9,6 +12,7 @@ class ScrollCardHorizontal extends StatefulWidget {
 
 class _ScrollCardHorizontalState extends State<ScrollCardHorizontal> {
   int selectedIndexButton = 0;
+
   @override
   Widget build(BuildContext context) {
     List<String> buttonLabels = ['Nearest', 'Popular', 'Top Rates'];
@@ -66,35 +70,20 @@ class _ScrollCardHorizontalState extends State<ScrollCardHorizontal> {
             ),
           ),
         ),
-        const SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: <Widget>[
-              ScrollCardHorizontalCard(
-                image: "assets/images/home1.jpg",
-                title: "House S+4 for students",
-                adress: "Rades, Ben Arous",
-                room: 4,
-                person: 4,
-                price: 150,
-              ),
-              ScrollCardHorizontalCard(
-                image: "assets/images/home2.jpg",
-                title: "House S+3 for students",
-                adress: "Rades, Ben Arous",
-                room: 3,
-                person: 4,
-                price: 150,
-              ),
-              ScrollCardHorizontalCard(
-                image: "assets/images/home1.jpg",
-                title: "House S+2 for students",
-                adress: "Rades, Ben Arous",
-                room: 2,
-                person: 4,
-                price: 150,
-              ),
-            ],
+        SingleChildScrollView(
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.annonces.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ScrollCardHorizontalCard(
+                image: 'assets/images/home1.jpg',
+                title: widget.annonces[index].title,
+                adress: widget.annonces[index].location,
+                room: widget.annonces[index].roomNumber,
+                person: widget.annonces[index].placeInRoom,
+                price: widget.annonces[index].price,
+              );
+            },
           ),
         ),
       ],
@@ -114,7 +103,8 @@ class ScrollCardHorizontalCard extends StatefulWidget {
   }) : super(key: key);
 
   final String image, title, adress;
-  final int price, room, person;
+  final int room, person;
+  final double price;
 
   @override
   _ScrollCardHorizontalCardState createState() =>

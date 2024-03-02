@@ -1,5 +1,7 @@
 import 'package:binomi/features/Home/widgets/scroll_card_horizontal.dart';
 import 'package:binomi/features/Home/widgets/scroll_card_vertical.dart';
+import 'package:binomi/features/annonces/models/annonce.dart';
+import 'package:binomi/features/annonces/services/api_annonce.dart';
 
 import 'package:binomi/shared/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +17,33 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int selectedIndex = 0;
+  int selectedIndexButton = 0;
   // final ApiClient _apiClient = ApiClient();
   // Future<Map<String, dynamic>> getUserData() async {
   //   dynamic userRes;
   //   userRes = await _apiClient.getUserProfileData(widget.accesstoken);
   //   return userRes;
   // }
-  int selectedIndexButton = 0;
+  final AnnonceService _annonceService = AnnonceService();
+  List<Annonce> _annonces = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAnnonces();
+  }
+
+  Future<void> _loadAnnonces() async {
+    try {
+      List<Annonce> annonces = await _annonceService.getAnnonces();
+      setState(() {
+        _annonces = annonces;
+      });
+    } catch (e) {
+      print('Failed to load annonces: $e');
+      // Handle error gracefully, e.g., show an error message
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +139,7 @@ class _HomeState extends State<Home> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  ScrollCardHorizontal(),
+                  ScrollCardHorizontal(annonces: []),
                   SizedBox(height: 20),
                   ScrollCardVertical(),
                   SizedBox(

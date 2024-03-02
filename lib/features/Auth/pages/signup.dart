@@ -25,7 +25,7 @@ class _SignupState extends State<Signup> {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     //get response from ApiClient
-    // dynamic res = await _apiClient.login(
+    // dynamic res = await _apiClient.registerUser(
     //   emailController.text,
     //   passwordController.text,
     // );
