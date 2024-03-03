@@ -1,17 +1,21 @@
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names, unnecessary_brace_in_string_interps
 
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:binomi/shared/models/User.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 
 class ApiClient {
-  static const String URL = 'https://localhost:3000/auth/';
+  static const String URL = 'http://localhost:3000/';
   final Dio _dio = Dio();
   var cookieJar = CookieJar();
 
   Future<Response> registerUser(Map<String, dynamic>? userData) async {
     try {
       Response response = await _dio.post(
-        '${URL}signup/', //ENDPONT URL
+        '${URL}auth/signup', //ENDPONT URL
         data: userData, //REQUEST BODY
       );
       //returns the successful json object
@@ -25,7 +29,7 @@ class ApiClient {
   Future<Response> login(String email, String password) async {
     try {
       Response response = await _dio.post(
-        '${URL}signin',
+        '${URL}auth/signin',
         data: {'email': email, 'password': password},
       );
       //returns the successful user data json object
@@ -38,15 +42,15 @@ class ApiClient {
 
   void GetToken() async {
     final cookieJar = CookieJar();
-    List<Cookie> results = await cookieJar
-        .loadForRequest(Uri.parse('https://localhost:3000/auth/signin'));
+    List<Cookie> results =
+        await cookieJar.loadForRequest(Uri.parse('http://localhost:3000/'));
     print(results);
   }
 
   Future<Response> getUserProfileData(String accesstoken) async {
     try {
       Response response = await _dio.get(
-        '${URL}user',
+        '${URL}auth/user',
         queryParameters: {'apikey': 'YOUR_API_KEY'},
         options: Options(
           headers: {
@@ -60,10 +64,19 @@ class ApiClient {
     }
   }
 
+  Future<User> getUser(String id) async {
+    final response = await http.get(Uri.parse('${URL}user/${id}'));
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to fetch user');
+    }
+  }
+
   Future<Response> logout(String accessToken) async {
     try {
       Response response = await _dio.get(
-        '${URL}signout',
+        '${URL}auth/signout',
         options: Options(
           headers: {'Authorization': 'Bearer $accessToken'},
         ),

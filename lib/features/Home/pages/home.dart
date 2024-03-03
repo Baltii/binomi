@@ -1,7 +1,10 @@
+import 'package:binomi/features/Home/widgets/card_widget.dart';
 import 'package:binomi/features/Home/widgets/scroll_card_horizontal.dart';
-import 'package:binomi/features/Home/widgets/scroll_card_vertical.dart';
 import 'package:binomi/features/annonces/models/annonce.dart';
+
 import 'package:binomi/features/annonces/services/api_annonce.dart';
+import 'package:binomi/features/profile/pages/user_profile.dart';
+import 'package:binomi/features/profile/widget/profile_information.dart';
 
 import 'package:binomi/shared/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +30,10 @@ class _HomeState extends State<Home> {
   final AnnonceService _annonceService = AnnonceService();
   List<Annonce> _annonces = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _loadAnnonces();
-  }
-
   Future<void> _loadAnnonces() async {
     try {
       List<Annonce> annonces = await _annonceService.getAnnonces();
+
       setState(() {
         _annonces = annonces;
       });
@@ -43,6 +41,12 @@ class _HomeState extends State<Home> {
       print('Failed to load annonces: $e');
       // Handle error gracefully, e.g., show an error message
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAnnonces();
   }
 
   @override
@@ -84,15 +88,23 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 const SizedBox(width: 20),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(14.22),
-                  child: const Image(
-                    image: AssetImage('assets/images/moi3.jpg'),
-                    fit: BoxFit.cover,
-                    width: 47.39,
-                    height: 47.39,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UserProfile()));
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14.22),
+                    child: const Image(
+                      image: AssetImage('assets/images/moi3.jpg'),
+                      fit: BoxFit.cover,
+                      width: 47.39,
+                      height: 47.39,
+                    ),
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -135,21 +147,25 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(height: 20),
-          const Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  ScrollCardHorizontal(annonces: []),
-                  SizedBox(height: 20),
-                  ScrollCardVertical(),
-                  SizedBox(
-                    // Ajout d'un espace pour afficher la barre de navigation inférieure
-                    height: kBottomNavigationBarHeight,
-                  ),
-                ],
-              ),
+          ScrollCardHorizontal(),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _annonces
+                  .where(
+                      (annonce) => annonce != null) // Filter out null elements
+                  .map((annonce) {
+                return ScrollCardHorizontalCard(
+                  image: 'assets/images/home1.jpg',
+                  title: annonce.title,
+                  adress: annonce.location,
+                  room: annonce.roomNumber,
+                  person: annonce.placeInRoom,
+                  price: annonce.price,
+                );
+              }).toList(),
             ),
-          ),
+          )
         ],
       ),
       bottomNavigationBar: BottomNavigationBarWidget(

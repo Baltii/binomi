@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class HeroProfile extends StatefulWidget {
-  const HeroProfile({Key? key}) : super(key: key);
+  final String title;
+
+  final String adress;
+
+  const HeroProfile({Key? key, required this.title, required this.adress})
+      : super(key: key);
 
   @override
   _HeroProfileState createState() => _HeroProfileState();
@@ -11,7 +16,6 @@ class _HeroProfileState extends State<HeroProfile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-     
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

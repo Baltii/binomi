@@ -44,9 +44,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => SearchPage(),
+        '/': (context) => Home(),
         '/login': (context) => Login(),
-        '/home': (context) => Home(),
+        // '/home': (context) => Home(),
         '/detail': (context) => AnnonceDetail(),
         '/profile': (context) => UserProfile(),
         '/settings': (context) => Settings(),

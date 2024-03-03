@@ -5,11 +5,10 @@ import 'package:http/http.dart' as http;
 import '../models/annonce.dart';
 
 class AnnonceService {
-  static const String apiUrl = 'https://localhost:3000/annonces';
+  static const String apiUrl = 'http://localhost:3000/annonces';
 
   Future<List<Annonce>> getAnnonces() async {
     final response = await http.get(Uri.parse(apiUrl));
-
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = jsonDecode(response.body);
       return jsonResponse.map((json) => Annonce.fromJson(json)).toList();

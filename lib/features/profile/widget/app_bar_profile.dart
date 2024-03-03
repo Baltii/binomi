@@ -1,7 +1,7 @@
+import 'package:binomi/features/profile/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 class AppBarProfile extends StatelessWidget {
-
   const AppBarProfile({Key? key}) : super(key: key);
 
   @override
@@ -18,11 +18,11 @@ class AppBarProfile extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-         
           _buildIconButton(
             icon: Icons.settings,
             onPressed: () {
-              print('hi'); // Utilisation de print() au lieu de console.log()
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Settings()));
             },
           ),
         ],
