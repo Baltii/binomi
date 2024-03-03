@@ -1,4 +1,3 @@
-import 'package:binomi/features/profile/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 class AppBarProfile extends StatelessWidget {
@@ -21,8 +20,8 @@ class AppBarProfile extends StatelessWidget {
           _buildIconButton(
             icon: Icons.settings,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Settings()));
+                 Navigator.pushNamed(context, '/settings');
+
             },
           ),
         ],

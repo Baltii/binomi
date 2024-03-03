@@ -12,18 +12,29 @@ class BottomNavigationBarWidget extends StatefulWidget {
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
-  int selectedIndex = 0;
+  // Définissez une liste d'URL correspondant à chaque icône
+  final List<String> _navigationUrls = ['/', '/search', '/favorites', '/profile'];
 
+  // Méthode pour changer l'index sélectionné
   void selectIndex(int index) {
     setState(() {
       selectedIndex = index;
-      widget.onIndexChanged(
-          index); // Notify the parent widget about the index change
     });
+
+    // Récupérez l'URL correspondant à l'index sélectionné
+    String selectedRoute = _navigationUrls[index];
+
+    // Naviguez vers l'URL correspondante
+    Navigator.pushNamed(context, selectedRoute);
   }
+
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    // Obtenez l'URL actuelle
+    String currentRoute = ModalRoute.of(context)!.settings.name!;
+
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -35,18 +46,18 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            buildNavItem(Icons.home, 0),
-            buildNavItem(Icons.map, 1),
-            buildNavItem(Icons.favorite, 2),
-            buildNavItem(Icons.person, 3),
+            buildNavItem(Icons.home, 0, currentRoute),
+            buildNavItem(Icons.map, 1, currentRoute),
+            buildNavItem(Icons.favorite, 2, currentRoute),
+            buildNavItem(Icons.person, 3, currentRoute),
           ],
         ),
       ),
     );
   }
 
-  Widget buildNavItem(IconData icon, int index) {
-    final isSelected = selectedIndex == index;
+  Widget buildNavItem(IconData icon, int index, String currentRoute) {
+    final isSelected = _navigationUrls[index] == currentRoute;
 
     return GestureDetector(
       onTap: () {

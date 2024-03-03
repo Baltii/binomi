@@ -1,3 +1,4 @@
+import 'package:binomi/features/search/widget/bottom_sheet_filter.dart';
 import 'package:flutter/material.dart';
 
 class AppBarSearch extends StatelessWidget {
@@ -20,15 +21,15 @@ class AppBarSearch extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color:  Colors.white,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.location_on),
-                  SizedBox(width: 10),
-                  Expanded(
+                  const Icon(Icons.location_on),
+                  const SizedBox(width: 10),
+                  const Expanded(
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search...',
@@ -38,8 +39,16 @@ class AppBarSearch extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
-                  Icon(Icons.clear), // Added another icon
+                  const SizedBox(width: 10),
+                  const Icon(Icons.clear),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      BottomSheetFilter.show(context, true);
+                    },
+                  ),
+                  // Ajoutez un autre widget IconButton ici si nécessaire
                 ],
               ),
             ),
@@ -48,6 +57,7 @@ class AppBarSearch extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildIconButton({
     required IconData icon,

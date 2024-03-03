@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:binomi/features/Auth/pages/signup.dart';
 import 'package:binomi/features/Auth/services/api_auth.dart';
 import 'package:binomi/features/annonces/pages/annonce-detail/annonce-detail.dart';
 import 'package:binomi/features/Home/pages/home.dart';
+import 'package:binomi/features/favorite/page/favorite.dart';
 import 'package:binomi/features/profile/pages/change_password.dart';
 import 'package:binomi/features/profile/pages/edit_profile.dart';
 import 'package:binomi/features/profile/pages/language.dart';
@@ -44,9 +46,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => Home(),
+        '/': (context) =>Signup(),
         '/login': (context) => Login(),
-        // '/home': (context) => Home(),
+        '/search': (context) => SearchPage(),
         '/detail': (context) => AnnonceDetail(),
         '/profile': (context) => UserProfile(),
         '/settings': (context) => Settings(),
@@ -54,6 +56,11 @@ class MyApp extends StatelessWidget {
         '/notifications': (context) => Notifications(),
         '/language': (context) => Language(),
         '/change_password': (context) => ChangePassword(),
+        '/welcome': (context) => Welcome(),
+        '/favorites': (context) => Favorite(),
+        '/signup': (context) => Signup(),
+
+
 
         // Add more routes as needed
       },
