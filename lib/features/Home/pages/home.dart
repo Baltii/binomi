@@ -168,6 +168,17 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/add_annonce');
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: Color.fromARGB(255, 0, 0, 0),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomNavigationBarWidget(
         onIndexChanged: (index) {
           setState(() {

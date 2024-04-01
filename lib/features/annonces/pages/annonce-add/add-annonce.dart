@@ -1,3 +1,4 @@
+import 'package:binomi/features/Auth/pages/login.dart';
 import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:binomi/features/annonces/widgets/app_bar_add_annonce.dart';
 
@@ -17,7 +18,6 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
   late TextEditingController _descriptionController;
   late TextEditingController _locationController;
   late TextEditingController _priceController;
-  late TextEditingController _userIdController;
   late List<String> _photo;
   late List<String> _homeFacilities;
   late Map<String, dynamic> _nearest;
@@ -33,7 +33,6 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     _descriptionController = TextEditingController();
     _locationController = TextEditingController();
     _priceController = TextEditingController();
-    _userIdController = TextEditingController();
     _photo = [];
     _homeFacilities = [];
     _nearest = {};
@@ -49,7 +48,6 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     _descriptionController.dispose();
     _locationController.dispose();
     _priceController.dispose();
-    _userIdController.dispose();
     super.dispose();
   }
 
@@ -106,35 +104,90 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                   return null;
                 },
               ),
-              // You can add TextFormField for other attributes similarly
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Create the Annonce object
-                    Annonce newAnnonce = Annonce(
-                      id: DateTime.now()
-                          .toString(), // You might want to generate a unique ID here
-                      title: _titleController.text,
-                      photo: _photo,
-                      roomNumber: int.parse(_roomNumberController.text),
-                      placeInRoom: int.parse(_placeInRoomController.text),
-                      placeDisponible:
-                          int.parse(_placeDisponibleController.text),
-                      homeFacilities: _homeFacilities,
-                      nearest: _nearest,
-                      description: _descriptionController.text,
-                      location: _locationController.text,
-                      dateDisponibilite: _dateDisponibilite,
-                      price: double.parse(_priceController.text),
-                      userId: _userIdController.text,
-                    );
-                    // You can now use the newAnnonce object as needed
-                    // For example, you can send it to a database or perform any other action
-                    print('New Annonce: $newAnnonce');
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(labelText: 'Description'),
+                keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Description';
                   }
+                  return null;
                 },
-                child: Text('Submit'),
               ),
+              TextFormField(
+                controller: _locationController,
+                decoration: InputDecoration(labelText: 'Adresse'),
+                keyboardType: TextInputType.streetAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Adresse';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _priceController,
+                decoration: InputDecoration(labelText: 'Price'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the price';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _priceController,
+                decoration: InputDecoration(labelText: 'Price'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the price';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20.0),
+              // You can add TextFormField for other attributes similarly
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Create the Annonce object
+                      Annonce newAnnonce = Annonce(
+                        id: DateTime.now()
+                            .toString(), // You might want to generate a unique ID here
+                        title: _titleController.text,
+                        photo: _photo,
+                        roomNumber: int.parse(_roomNumberController.text),
+                        placeInRoom: int.parse(_placeInRoomController.text),
+                        placeDisponible:
+                            int.parse(_placeDisponibleController.text),
+                        homeFacilities: _homeFacilities,
+                        nearest: _nearest,
+                        description: _descriptionController.text,
+                        location: _locationController.text,
+                        dateDisponibilite: _dateDisponibilite,
+                        price: double.parse(_priceController.text),
+                        userId: '',
+                      );
+                      // You can now use the newAnnonce object as needed
+                      // For example, you can send it to a database or perform any other action
+                      print('New Annonce: $newAnnonce');
+                    }
+                  },
+                  child: const Text("Add Annonce"),
+                ),
+              )
             ],
           ),
         ),
