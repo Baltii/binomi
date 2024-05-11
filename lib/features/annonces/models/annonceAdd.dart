@@ -1,9 +1,12 @@
-class Annonce {
+
+import 'package:image_picker/image_picker.dart';
+
+class AnnonceAdd {
   final String id;
   final String title;
-    final String type;
+  final String type;
   final String gender;
-  final List<String> photo;
+  final List<XFile> photo;
   final int roomNumber;
   final int placeInRoom;
   final int placeDisponible;
@@ -15,7 +18,7 @@ class Annonce {
   final double price;
   final String userId;
 
-  Annonce({
+  AnnonceAdd({
     required this.id,
     required this.title,
     required this.type,
@@ -33,13 +36,13 @@ class Annonce {
     required this.userId,
   });
 
-  factory Annonce.fromJson(Map<String, dynamic> json) {
-    return Annonce(
+  factory AnnonceAdd.fromJson(Map<String, dynamic> json) {
+    return AnnonceAdd(
       id: json['_id'],
       title: json['title'],
       type: json['type'],
       gender: json['gender'],
-      photo: List<String>.from(json['photo']),
+      photo: List<XFile>.from(json['photo']),
       roomNumber: json['roomNumber'],
       placeInRoom: json['placeInRoom'],
       placeDisponible: json['placeDisponible'],
@@ -57,7 +60,7 @@ class Annonce {
     return {
       '_id': id,
       'title': title,
-      'type':type,
+      'type': type,
       "gender": gender,
       'photo': photo,
       'roomNumber': roomNumber,

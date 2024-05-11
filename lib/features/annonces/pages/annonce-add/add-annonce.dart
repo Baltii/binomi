@@ -1,5 +1,7 @@
 import 'package:binomi/features/annonces/models/annonce.dart';
+import 'package:binomi/features/annonces/models/annonceAdd.dart';
 import 'package:binomi/features/annonces/widgets/app_bar_add_annonce.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter/material.dart';
 
@@ -9,32 +11,37 @@ class AddAnnonceForm extends StatefulWidget {
 }
 
 class _AddAnnonceFormState extends State<AddAnnonceForm> {
+    final ImagePicker _picker = ImagePicker();
+      List<XFile>? _imageFiles;
+
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
+  late String _typeController;
+  late String _genderController;
   late TextEditingController _roomNumberController;
   late TextEditingController _placeInRoomController;
   late TextEditingController _placeDisponibleController;
   late TextEditingController _descriptionController;
   late TextEditingController _locationController;
   late TextEditingController _priceController;
-  late List<String> _photo;
   late List<String> _homeFacilities;
-  late Map<String, dynamic> _nearest;
+  late List<String> _nearest;
   late DateTime _dateDisponibilite;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController();
+    _typeController = "";
+    _genderController = "";
     _roomNumberController = TextEditingController();
     _placeInRoomController = TextEditingController();
     _placeDisponibleController = TextEditingController();
     _descriptionController = TextEditingController();
     _locationController = TextEditingController();
     _priceController = TextEditingController();
-    _photo = [];
     _homeFacilities = [];
-    _nearest = {};
+    _nearest = [];
     _dateDisponibilite = DateTime.now();
   }
 
@@ -49,6 +56,23 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     _priceController.dispose();
     super.dispose();
   }
+  Future<void> _pickImages() async {
+    try {
+      final List<XFile>? images = await _picker.pickMultiImage(
+        maxWidth: 1920,
+        maxHeight: 1200,
+        imageQuality: 80,
+      );
+      if (images != null) {
+        setState(() {
+          _imageFiles = images;
+        });
+      }
+    } catch (e) {
+      print('Error picking images: $e');
+    }
+  }
+   
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +84,18 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
           child: ListView(
             children: <Widget>[
               const AppBarAddAnnonce(),
+              // Widget pour afficher les images sélectionnées
+              if (_imageFiles != null)
+                Column(
+                  children: _imageFiles!.map((imageFile) {
+                    return Image.file(File(imageFile.path));
+                  }).toList(),
+                ),
+              // Bouton pour ajouter des images
+              ElevatedButton(
+                onPressed: _pickImages,
+                child: Text("Pick images"),
+              ),
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Title'),
@@ -163,11 +199,13 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Create the Annonce object
-                      Annonce newAnnonce = Annonce(
+                      AnnonceAdd newAnnonce = AnnonceAdd(
                         id: DateTime.now()
                             .toString(), // You might want to generate a unique ID here
                         title: _titleController.text,
-                        photo: _photo,
+                        type: '',
+                        gender: '',
+                        photo: _photoController,
                         roomNumber: int.parse(_roomNumberController.text),
                         placeInRoom: int.parse(_placeInRoomController.text),
                         placeDisponible:

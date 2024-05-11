@@ -150,10 +150,7 @@ class _HomeState extends State<Home> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: _annonces
-                  .where(
-                      (annonce) => annonce != null) // Filter out null elements
-                  .map((annonce) {
+              children: _annonces.map((annonce) {
                 return ScrollCardHorizontalCard(
                   image: 'assets/images/home1.jpg',
                   title: annonce.title,
