@@ -1,4 +1,3 @@
-import 'package:binomi/features/Auth/pages/login.dart';
 import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:binomi/features/annonces/widgets/app_bar_add_annonce.dart';
 
@@ -55,7 +54,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -63,7 +62,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               const AppBarAddAnnonce(),
               TextFormField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a title';
@@ -73,7 +72,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _roomNumberController,
-                decoration: InputDecoration(labelText: 'Room Number'),
+                decoration: const InputDecoration(labelText: 'Room Number'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -84,7 +83,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _placeInRoomController,
-                decoration: InputDecoration(labelText: 'Place in Room'),
+                decoration: const InputDecoration(labelText: 'Place in Room'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -95,7 +94,8 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _placeDisponibleController,
-                decoration: InputDecoration(labelText: 'Place Disponible'),
+                decoration:
+                    const InputDecoration(labelText: 'Place Disponible'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -106,7 +106,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 keyboardType: TextInputType.multiline,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -117,7 +117,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _locationController,
-                decoration: InputDecoration(labelText: 'Adresse'),
+                decoration: const InputDecoration(labelText: 'Adresse'),
                 keyboardType: TextInputType.streetAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -128,7 +128,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _priceController,
-                decoration: InputDecoration(labelText: 'Price'),
+                decoration: const InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -139,7 +139,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
               ),
               TextFormField(
                 controller: _priceController,
-                decoration: InputDecoration(labelText: 'Price'),
+                decoration: const InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -148,7 +148,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               // You can add TextFormField for other attributes similarly
               SizedBox(
                 width: MediaQuery.of(context).size.width,

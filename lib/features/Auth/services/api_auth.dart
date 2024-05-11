@@ -1,28 +1,50 @@
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names, unnecessary_brace_in_string_interps
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names, unnecessary_brace_in_string_interps, deprecated_member_use
 
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:binomi/shared/models/User.dart';
-import 'package:cookie_jar/cookie_jar.dart';
+
 import 'package:dio/dio.dart';
 
 class ApiClient {
   static const String URL = 'http://localhost:3000/';
   final Dio _dio = Dio();
-  var cookieJar = CookieJar();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  Future<Response> registerUser(Map<String, dynamic>? userData) async {
+  Future<Map<String, dynamic>> registerUser(
+      Map<String, dynamic>? userData) async {
     try {
+      // Make POST request to the registration endpoint
       Response response = await _dio.post(
-        '${URL}auth/signup', //ENDPONT URL
-        data: userData, //REQUEST BODY
+        '${URL}auth/signup',
+        data: userData,
       );
-      //returns the successful json object
-      return response.data;
+
+      // Return response data along with status code
+      return {
+        'statusCode': response.statusCode,
+        'data': response.data,
+      };
     } on DioError catch (e) {
-      //returns the error object if there is
-      return e.response!.data;
+      // Handle Dio errors
+      if (e.response != null) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx.
+        return {
+          'statusCode': e.response!.statusCode,
+          'error': 'Server error',
+          'message': e.response!.statusMessage,
+        };
+      } else {
+        // The request was made but no response was received, or
+        // something went wrong during processing the response.
+        return {
+          'error': 'Network error',
+          'message': e.message,
+        };
+      }
     }
   }
 
@@ -40,11 +62,8 @@ class ApiClient {
     }
   }
 
-  void GetToken() async {
-    final cookieJar = CookieJar();
-    List<Cookie> results =
-        await cookieJar.loadForRequest(Uri.parse('http://localhost:3000/'));
-    print(results);
+  Future<String?> getToken() async {
+    return await _secureStorage.read(key: 'token');
   }
 
   Future<Response> getUserProfileData(String accesstoken) async {

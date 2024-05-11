@@ -4,7 +4,6 @@ import 'package:binomi/features/annonces/models/annonce.dart';
 
 import 'package:binomi/features/annonces/services/api_annonce.dart';
 import 'package:binomi/features/profile/pages/user_profile.dart';
-import 'package:binomi/features/profile/widget/profile_information.dart';
 
 import 'package:binomi/shared/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';

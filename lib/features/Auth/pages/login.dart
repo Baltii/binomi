@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
-import 'package:binomi/features/Auth/services/api_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -15,9 +14,8 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final ApiClient _apiClient = ApiClient();
   bool _showPassword = false;
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   Future<void> loginUsers() async {
     //show snackbar to indicate loading

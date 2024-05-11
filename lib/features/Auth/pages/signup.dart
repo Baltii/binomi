@@ -1,6 +1,7 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+
 import 'package:binomi/features/Auth/services/api_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -17,17 +18,56 @@ class _SignupState extends State<Signup> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ApiClient _apiClient = ApiClient();
-  bool _showPassword = false;
-  final storage = FlutterSecureStorage();
+  final bool _showPassword = false;
 
   Future<void> SignupUsers() async {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Processing Data'),
-      backgroundColor: Colors.green.shade300,
-    ));
-    await Future.delayed(Duration(seconds: 1));
-    Navigator.pushNamed(context, '/home');
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    if (_formKey.currentState!.validate()) {
+      // Prepare user data from input fields
+      Map<String, dynamic> userData = {
+        'firstName': firstNameController.text,
+        'lastName': lastNameController.text,
+        'email': emailController.text,
+        'phone': phoneController.text,
+        'password': passwordController.text,
+      };
+
+      // Call the registerUser function and wait for the result
+      Map<String, dynamic> result = await _apiClient.registerUser(userData);
+
+      // Check the result
+      if (result.containsKey('statusCode') && result['statusCode'] == 200) {
+        // Registration successful
+        // Navigate to another page, show a success message, etc.
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Processing Data'),
+          backgroundColor: Colors.green.shade300,
+        ));
+        await Future.delayed(Duration(seconds: 1));
+        Navigator.pushNamed(context, '/home');
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      } else {
+        // Registration failed, handle the error
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Registration Error'),
+              content: Text(result.containsKey('message')
+                  ? result['message']
+                  : 'Unknown error occurred'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   Widget buildTextFormField({
