@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:binomi/features/annonces/models/annonceAdd.dart';
+import 'package:binomi/features/annonces/services/api_annonce.dart';
 import 'package:binomi/features/annonces/widgets/app_bar_add_annonce.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -11,8 +14,9 @@ class AddAnnonceForm extends StatefulWidget {
 }
 
 class _AddAnnonceFormState extends State<AddAnnonceForm> {
-    final ImagePicker _picker = ImagePicker();
-      List<XFile>? _imageFiles;
+  final AnnonceService _annonceService = AnnonceService();
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? _imageFiles;
 
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
@@ -56,23 +60,21 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     _priceController.dispose();
     super.dispose();
   }
+
   Future<void> _pickImages() async {
     try {
-      final List<XFile>? images = await _picker.pickMultiImage(
+      final List<XFile> images = await _picker.pickMultiImage(
         maxWidth: 1920,
         maxHeight: 1200,
         imageQuality: 80,
       );
-      if (images != null) {
-        setState(() {
-          _imageFiles = images;
-        });
-      }
+      setState(() {
+        _imageFiles = images;
+      });
     } catch (e) {
       print('Error picking images: $e');
     }
   }
-   
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +207,6 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                         title: _titleController.text,
                         type: '',
                         gender: '',
-                        photo: _photoController,
                         roomNumber: int.parse(_roomNumberController.text),
                         placeInRoom: int.parse(_placeInRoomController.text),
                         placeDisponible:
@@ -216,11 +217,19 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                         location: _locationController.text,
                         dateDisponibilite: _dateDisponibilite,
                         price: double.parse(_priceController.text),
-                        userId: '',
+                        userId: '65cd5d05f9f89ba184fe8168',
                       );
+                      _annonceService
+                          .createAnnonce(newAnnonce, _imageFiles!)
+                          .then((annonce) {
+                        // You can now use the newAnnonce object as needed
+                        // For example, you can send it to a database or perform any other action
+                        print('New Annonce: $newAnnonce');
+                      }).catchError((error) {
+                        print('Error creating annonce: $error');
+                      });
                       // You can now use the newAnnonce object as needed
                       // For example, you can send it to a database or perform any other action
-                      print('New Annonce: $newAnnonce');
                     }
                   },
                   child: const Text("Add Annonce"),

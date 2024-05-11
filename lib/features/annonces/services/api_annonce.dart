@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:binomi/features/annonces/models/annonceAdd.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import '../models/annonce.dart';
+
+import 'dart:io';
 
 class AnnonceService {
   static const String apiUrl = 'http://localhost:3000/annonces';
@@ -27,17 +31,31 @@ class AnnonceService {
     }
   }
 
-  Future<Annonce> createAnnonce(Annonce annonce) async {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(annonce.toJson()),
-    );
+  Future<AnnonceAdd> createAnnonce(
+      AnnonceAdd annonce, List<XFile> photos) async {
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
+    // Add the annonce data as fields
+    request.fields['title'] = annonce.title;
+    // Add other fields as needed
+
+    // Add the photos
+    for (var photo in photos) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'photos',
+        photo.path,
+      )); // Adjust the content type as per your images
+    }
+
+    // Send the request
+    var response = await request.send();
+
+    // Check the response status code
     if (response.statusCode == 201) {
-      return Annonce.fromJson(jsonDecode(response.body));
+      // Parse and return the response
+      var jsonResponse = jsonDecode(await response.stream.bytesToString());
+      return AnnonceAdd.fromJson(jsonResponse);
     } else {
       throw Exception('Failed to create annonce');
     }

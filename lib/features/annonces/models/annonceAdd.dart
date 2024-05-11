@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -6,7 +7,6 @@ class AnnonceAdd {
   final String title;
   final String type;
   final String gender;
-  final List<XFile> photo;
   final int roomNumber;
   final int placeInRoom;
   final int placeDisponible;
@@ -23,7 +23,6 @@ class AnnonceAdd {
     required this.title,
     required this.type,
     required this.gender,
-    required this.photo,
     required this.roomNumber,
     required this.placeInRoom,
     required this.placeDisponible,
@@ -42,7 +41,6 @@ class AnnonceAdd {
       title: json['title'],
       type: json['type'],
       gender: json['gender'],
-      photo: List<XFile>.from(json['photo']),
       roomNumber: json['roomNumber'],
       placeInRoom: json['placeInRoom'],
       placeDisponible: json['placeDisponible'],
@@ -62,7 +60,6 @@ class AnnonceAdd {
       'title': title,
       'type': type,
       "gender": gender,
-      'photo': photo,
       'roomNumber': roomNumber,
       'placeInRoom': placeInRoom,
       'placeDisponible': placeDisponible,
