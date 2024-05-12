@@ -9,7 +9,7 @@ import '../models/annonce.dart';
 import 'dart:io';
 
 class AnnonceService {
-  static const String apiUrl = 'http://localhost:3000/annonces';
+  static const String apiUrl = 'http://10.0.2.2:3000/annonces';
 
   Future<List<Annonce>> getAnnonces() async {
     final response = await http.get(Uri.parse(apiUrl));
@@ -38,7 +38,15 @@ class AnnonceService {
 
     // Add the annonce data as fields
     request.fields['title'] = annonce.title;
-    // Add other fields as needed
+    request.fields['type'] = annonce.type;
+    request.fields['gender'] = annonce.gender;
+    request.fields['roomNumber'] = annonce.roomNumber.toString();
+    request.fields['placeInRoom'] = annonce.placeInRoom.toString();
+    request.fields['placeDisponible'] = annonce.placeDisponible.toString();
+    request.fields['description'] = annonce.description;
+    request.fields['location'] = annonce.location;
+    request.fields['price'] = annonce.price.toString();
+    request.fields['userId'] = annonce.userId;
 
     // Add the photos
     for (var photo in photos) {
