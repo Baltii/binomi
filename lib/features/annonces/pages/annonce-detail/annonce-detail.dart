@@ -1,7 +1,10 @@
+import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class AnnonceDetail extends StatefulWidget {
+  // final Annonce annonce;
+
   const AnnonceDetail({Key? key}) : super(key: key);
 
   @override
@@ -11,16 +14,15 @@ class AnnonceDetail extends StatefulWidget {
 class _AnnonceDetailState extends State<AnnonceDetail> {
   int selectedIndex = 0;
   bool isFavorite = false;
-  List imageList = [
-    {"id": 1, "image_path": 'assets/images/home1.jpg'},
-    {"id": 2, "image_path": 'assets/images/home2.jpg'},
-    {"id": 3, "image_path": 'assets/images/backgroundApp.png'},
-    {"id": 4, "image_path": 'assets/images/home2.jpg'},
-    {"id": 5, "image_path": 'assets/images/home1.jpg'},
+  List<Map<String, String>> imageList = [
+    {"id": "1", "image_path": 'assets/images/home1.jpg'},
+    {"id": "2", "image_path": 'assets/images/home2.jpg'},
+    {"id": "3", "image_path": 'assets/images/backgroundApp.png'},
+    {"id": "4", "image_path": 'assets/images/home2.jpg'},
+    {"id": "5", "image_path": 'assets/images/home1.jpg'},
   ];
   final CarouselController carouselController = CarouselController();
-
-  int currentIndex = 0;
+  late int currentIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class _AnnonceDetailState extends State<AnnonceDetail> {
                   items: imageList
                       .map(
                         (item) => Image.asset(
-                          item['image_path'],
+                          item['image_path']!,
                           fit: BoxFit.cover,
                           width: double.infinity,
                         ),

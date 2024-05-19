@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class AnnonceAdd {
-  final String id;
   final String title;
   final String type;
   final String gender;
@@ -12,14 +11,13 @@ class AnnonceAdd {
   final int placeDisponible;
   final List<String> homeFacilities;
   final List<String> nearest;
+  final String dateDisponibilite;
   final String description;
   final String location;
-  final DateTime dateDisponibilite;
-  final double price;
-  final String userId;
+  final int price;
+  final String user_id;
 
   AnnonceAdd({
-    required this.id,
     required this.title,
     required this.type,
     required this.gender,
@@ -28,35 +26,33 @@ class AnnonceAdd {
     required this.placeDisponible,
     required this.homeFacilities,
     required this.nearest,
+    required this.dateDisponibilite,
     required this.description,
     required this.location,
-    required this.dateDisponibilite,
     required this.price,
-    required this.userId,
+    required this.user_id,
   });
 
   factory AnnonceAdd.fromJson(Map<String, dynamic> json) {
     return AnnonceAdd(
-      id: json['_id'],
-      title: json['title'],
-      type: json['type'],
-      gender: json['gender'],
-      roomNumber: json['roomNumber'],
-      placeInRoom: json['placeInRoom'],
-      placeDisponible: json['placeDisponible'],
-      homeFacilities: List<String>.from(json['homeFacilities']),
-      nearest: List<String>.from(json['nearest']),
-      description: json['description'],
-      location: json['location'],
-      dateDisponibilite: DateTime.parse(json['dateDisponibilite']),
-      price: json['price'].toDouble(),
-      userId: json['user_id'],
+      title: json['title'] as String,
+      type: json['type'] as String,
+      gender: json['gender'] as String,
+      roomNumber: json['roomNumber'] as int,
+      placeInRoom: json['placeInRoom'] as int,
+      placeDisponible: json['placeDisponible'] as int,
+      homeFacilities: (json['homeFacilities'] as List<String>),
+      nearest: (json['nearest'] as List<String>),
+      dateDisponibilite: json['dateDisponibilite'] as String,
+      description: json['description'] as String,
+      location: json['location'] as String,
+      price: json['price'] as int,
+      user_id: json['user_id'] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
       'title': title,
       'type': type,
       "gender": gender,
@@ -67,9 +63,9 @@ class AnnonceAdd {
       'nearest': nearest,
       'description': description,
       'location': location,
-      'dateDisponibilite': dateDisponibilite.toIso8601String(),
+      'dateDisponibilite': dateDisponibilite,
       'price': price,
-      'user_id': userId,
+      'user_id': user_id,
     };
   }
 }

@@ -1,7 +1,7 @@
 class Annonce {
   final String id;
   final String title;
-    final String type;
+  final String type;
   final String gender;
   final List<String> photo;
   final int roomNumber;
@@ -53,11 +53,13 @@ class Annonce {
     );
   }
 
+  get image => null;
+
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'title': title,
-      'type':type,
+      'type': type,
       "gender": gender,
       'photo': photo,
       'roomNumber': roomNumber,
