@@ -58,7 +58,7 @@ class _UserProfileState extends State<UserProfile> {
             SizedBox(height: 20),
             _user != null
                 ? HeroProfile(
-                    title: _user!.firstName ?? '',
+                    title: _user!.firstName,
                     adress: '',
                   )
                 : Center(

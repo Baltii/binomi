@@ -9,7 +9,7 @@ import 'package:binomi/shared/models/User.dart';
 import 'package:dio/dio.dart';
 
 class ApiClient {
-  static const String URL = 'http://localhost:3000/';
+  static const String URL = 'http://10.0.2.2:3000/';
   final Dio _dio = Dio();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 

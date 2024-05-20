@@ -1,12 +1,8 @@
 import 'dart:convert';
-
 import 'package:binomi/features/annonces/models/annonceAdd.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-
 import '../models/annonce.dart';
-
-import 'dart:io';
 
 class AnnonceService {
   static const String apiUrl = 'http://10.0.2.2:3000/annonces';
@@ -37,33 +33,49 @@ class AnnonceService {
     }
   }
 
-  Future<AnnonceAdd> createAnnonce(
-      AnnonceAdd annonce, List<XFile> photos) async {
-    // Create a multipart request
-    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+  Future<void> createAnnonce(AnnonceAdd annonce, List<XFile> photos) async {
+    try {
+      // Create a multipart request
+      var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
-    // Add the annonce data as fields
-    request.fields['title'] = annonce.title;
-    // Add other fields as needed
+      // Add the form fields
+      request.fields['title'] = annonce.title;
+      request.fields['type'] = annonce.type;
+      request.fields['gender'] = annonce.gender;
+      request.fields['roomNumber'] = annonce.roomNumber.toString();
+      request.fields['placeInRoom'] = annonce.placeInRoom.toString();
+      request.fields['placeDisponible'] = annonce.placeDisponible.toString();
+      request.fields['homeFacilities'] = json.encode(annonce.homeFacilities);
+      request.fields['nearest'] = json.encode(annonce.nearest);
+      request.fields['dateDisponibilite'] =
+          annonce.dateDisponibilite.toString();
+      request.fields['description'] = annonce.description;
+      request.fields['location'] = annonce.location;
+      request.fields['price'] = annonce.price.toString();
+      request.fields['user_id'] = annonce.user_id.toString();
 
-    // Add the photos
-    for (var photo in photos) {
-      request.files.add(await http.MultipartFile.fromPath(
-        'photos',
-        photo.path,
-      )); // Adjust the content type as per your images
-    }
+      // Add the photos
+      for (var photo in photos) {
+        request.files
+            .add(await http.MultipartFile.fromPath('photos', photo.path));
+      }
 
-    // Send the request
-    var response = await request.send();
+      // Send the request
+      var response = await request.send();
 
-    // Check the response status code
-    if (response.statusCode == 201) {
-      // Parse and return the response
-      var jsonResponse = jsonDecode(await response.stream.bytesToString());
-      return AnnonceAdd.fromJson(jsonResponse);
-    } else {
-      throw Exception('Failed to create annonce');
+      // Check the response status code
+      if (response.statusCode == 201) {
+        // Parse and return the response
+        var jsonResponse = jsonDecode(await response.stream.bytesToString());
+      } else {
+        // Handle the error
+        var errorResponse = await response.stream.bytesToString();
+        throw Exception('Failed to create annonce: $errorResponse');
+      }
+    } catch (e) {
+      // Handle any other exceptions
+      print('Error creating annonce: $e');
+      rethrow;
     }
   }
 

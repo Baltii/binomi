@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:binomi/features/annonces/models/annonceAdd.dart';
 import 'package:binomi/features/annonces/services/api_annonce.dart';
 import 'package:binomi/features/annonces/widgets/app_bar_add_annonce.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class AddAnnonceForm extends StatefulWidget {
   @override
@@ -30,7 +30,62 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
   late TextEditingController _priceController;
   late List<String> _homeFacilities;
   late List<String> _nearest;
-  late DateTime _dateDisponibilite;
+  final TextEditingController _dateDisponibilite = TextEditingController();
+  String? _selectedType;
+  String? _selectedGender;
+  List<String> _selectedfacilts = [];
+  List<String> _selectedNearest = [];
+  List<String> _types = ['Appartemnt', 'House', 'Studio'];
+  List<String> _genders = ['Man', 'Woman'];
+  List<String> _nears = ['Supermarket', 'University', 'School'];
+  List<String> _homeFacils = [
+    'Wifi',
+    'Free Electricity',
+    'Free Water',
+    'Parking',
+    'Kitchen',
+    'Free Laundry',
+    'Gym',
+    'Pool',
+    'Garden',
+    'Balcony',
+    'Terrace',
+    'Air Conditioning',
+    'Free Heating',
+    'Free TV',
+    'Free Fridge',
+    'Free Microwave',
+    'Free Oven',
+    'Free Dishwasher',
+    'Free Washing Machine',
+    'Free Dryer',
+    'Free Towels',
+    'Free Bed Linen',
+    'Free Desk',
+    'Free Chair',
+    'Free Closet',
+    'Free Shelves',
+    'Free Bedside Table',
+    'Free Bedside Lamp',
+    'Free Mirror',
+    'Free Curtains',
+    'Free Blinds',
+    'Free Carpet',
+    'Free Sofa',
+    'Free Armchair',
+    'Free Coffee Table',
+    'Free Dining Table',
+    'Free Dining Chair',
+    'Free Stool',
+    'Free Bar Stool',
+    'Free TV Stand',
+    'Free TV Table',
+    'Free TV Cabinet',
+    'Free TV Shelf',
+    'Free TV Wall Mount',
+    'Free TV Wall Bracket',
+    'Free TV Wall Unit'
+  ];
 
   @override
   void initState() {
@@ -46,7 +101,6 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     _priceController = TextEditingController();
     _homeFacilities = [];
     _nearest = [];
-    _dateDisponibilite = DateTime.now();
   }
 
   @override
@@ -58,6 +112,7 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     _descriptionController.dispose();
     _locationController.dispose();
     _priceController.dispose();
+    _dateDisponibilite.dispose();
     super.dispose();
   }
 
@@ -74,6 +129,41 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
     } catch (e) {
       print('Error picking images: $e');
     }
+  }
+
+  void _showMultiSelect(BuildContext context) async {
+    await showModalBottomSheet(
+      isScrollControlled: true, // required for min/max child size
+      context: context,
+      builder: (ctx) {
+        return MultiSelectBottomSheet(
+          items: _homeFacils.map((e) => MultiSelectItem(e, e)).toList(),
+          initialValue: [_homeFacils[0]],
+          onConfirm: (results) {
+            _selectedfacilts = results.cast<String>();
+          },
+          maxChildSize: 0.7,
+        );
+      },
+    );
+  }
+
+  void _nearestShowMultiSelect(BuildContext context) async {
+    await showModalBottomSheet(
+      isScrollControlled: true, // required for min/max child size
+      context: context,
+      builder: (ctx) {
+        return MultiSelectBottomSheet(
+          items: _nears.map((e) => MultiSelectItem(e, e)).toList(),
+          initialValue: [_nears[0]],
+          onConfirm: (results) {
+            _selectedNearest = results.cast<String>();
+            print(_selectedNearest);
+          },
+          maxChildSize: 0.7,
+        );
+      },
+    );
   }
 
   @override
@@ -170,23 +260,97 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the price';
+                    return 'Please enter price';
                   }
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _priceController,
-                decoration: const InputDecoration(labelText: 'Price'),
-                keyboardType: TextInputType.number,
+
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Select a type',
+                  border: OutlineInputBorder(),
+                ),
+                value: _selectedType,
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedType = newValue;
+                  });
+                },
+                items: _types.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the price';
+                  if (value == null) {
+                    return 'Please select a type';
                   }
                   return null;
                 },
+              ),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Select a gender',
+                  border: OutlineInputBorder(),
+                ),
+                value: _selectedGender,
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedGender = newValue;
+                  });
+                },
+                items: _genders.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a Gender';
+                  }
+                  return null;
+                },
+              ),
+
+              TextFormField(
+                controller: _dateDisponibilite,
+                decoration: const InputDecoration(
+                  labelText: 'Date Disponibilite',
+                ),
+                readOnly: true,
+                onTap: () async {
+                  final DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) {
+                    String formattedDate =
+                        pickedDate.toString().split(' ').first;
+                    _dateDisponibilite.text = formattedDate;
+                  }
+                },
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return 'Please select a date';
+                //   }
+                //   return null;
+                // },
+              ),
+
+              ElevatedButton(
+                onPressed: () => _showMultiSelect(context),
+                child: Text('Choose Home Facilities'),
               ),
               const SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () => _nearestShowMultiSelect(context),
+                child: Text('Choose Nearest Places'),
+              ),
               // You can add TextFormField for other attributes similarly
               SizedBox(
                 width: MediaQuery.of(context).size.width,
@@ -202,22 +366,21 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                     if (_formKey.currentState!.validate()) {
                       // Create the Annonce object
                       AnnonceAdd newAnnonce = AnnonceAdd(
-                        id: DateTime.now()
-                            .toString(), // You might want to generate a unique ID here
+                        // You might want to generate a unique ID here
                         title: _titleController.text,
-                        type: '',
-                        gender: '',
+                        type: _selectedType!,
+                        gender: _selectedGender!,
                         roomNumber: int.parse(_roomNumberController.text),
                         placeInRoom: int.parse(_placeInRoomController.text),
                         placeDisponible:
                             int.parse(_placeDisponibleController.text),
-                        homeFacilities: _homeFacilities,
-                        nearest: _nearest,
+                        homeFacilities: _selectedfacilts,
+                        nearest: _selectedNearest,
                         description: _descriptionController.text,
                         location: _locationController.text,
-                        dateDisponibilite: _dateDisponibilite,
-                        price: double.parse(_priceController.text),
-                        userId: '65cd5d05f9f89ba184fe8168',
+                        dateDisponibilite: _dateDisponibilite.text,
+                        price: int.parse(_priceController.text),
+                        user_id: '65cd5d05f9f89ba184fe8168',
                       );
                       _annonceService
                           .createAnnonce(newAnnonce, _imageFiles!)

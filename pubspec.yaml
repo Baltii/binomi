@@ -41,6 +41,7 @@ dependencies:
   cookie_jar: ^4.0.8
   http: ^0.13.6
   flutter_secure_storage: ^9.0.0
+  multi_select_flutter: ^4.1.3
 
 dev_dependencies:
   flutter_test:
