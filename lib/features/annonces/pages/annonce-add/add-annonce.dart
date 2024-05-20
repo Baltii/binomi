@@ -385,14 +385,12 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
                       _annonceService
                           .createAnnonce(newAnnonce, _imageFiles!)
                           .then((annonce) {
-                        // You can now use the newAnnonce object as needed
-                        // For example, you can send it to a database or perform any other action
+                     _showSuccessDialog();
                         print('New Annonce: $newAnnonce');
                       }).catchError((error) {
                         print('Error creating annonce: $error');
                       });
-                      // You can now use the newAnnonce object as needed
-                      // For example, you can send it to a database or perform any other action
+                    
                     }
                   },
                   child: const Text("Add Annonce"),
@@ -404,4 +402,36 @@ class _AddAnnonceFormState extends State<AddAnnonceForm> {
       ),
     );
   }
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text('Annonce added successfully!'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    ).then((_) {
+      // Reset the form fields after closing the dialog
+      _formKey.currentState!.reset();
+      setState(() {
+        _imageFiles = null;
+        _selectedType = null;
+        _selectedGender = null;
+        _selectedfacilts = [];
+        _selectedNearest = [];
+        _dateDisponibilite.clear();
+      });
+    });
+  }
+
 }
+

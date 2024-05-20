@@ -2,12 +2,19 @@ import 'package:binomi/features/search/widget/bottom_sheet_filter.dart';
 import 'package:flutter/material.dart';
 
 class AppBarSearch extends StatelessWidget {
-  const AppBarSearch({Key? key}) : super(key: key);
+  final Function(String) onSearch;
+  final TextEditingController searchController;
+
+  const AppBarSearch({
+    Key? key,
+    required this.onSearch,
+    required this.searchController,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.transparent, // Couleur de fond de l'app bar
+      color: Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 13.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,9 +36,10 @@ class AppBarSearch extends StatelessWidget {
                 children: [
                   const Icon(Icons.location_on),
                   const SizedBox(width: 10),
-                  const Expanded(
+                  Expanded(
                     child: TextField(
-                      decoration: InputDecoration(
+                      controller: searchController,
+                      decoration: const InputDecoration(
                         hintText: 'Search...',
                         hintStyle:
                             TextStyle(color: Color(0xff7D7F88), fontSize: 12),
@@ -40,15 +48,12 @@ class AppBarSearch extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Icon(Icons.clear),
-                  const SizedBox(width: 10),
                   IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () {
-                      BottomSheetFilter.show(context, true);
+                      onSearch(searchController.text);
                     },
                   ),
-                  // Ajoutez un autre widget IconButton ici si nécessaire
                 ],
               ),
             ),
@@ -57,7 +62,6 @@ class AppBarSearch extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildIconButton({
     required IconData icon,

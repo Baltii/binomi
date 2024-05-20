@@ -1,12 +1,12 @@
 import 'package:binomi/features/annonces/models/annonce.dart';
 import 'package:binomi/features/annonces/services/api_annonce.dart';
+import 'package:binomi/features/search/services/api_search.dart';
 import 'package:binomi/features/search/widget/app_bar_serch.dart';
 import 'package:binomi/shared/bottom_nav_bar.dart';
 import 'package:binomi/shared/widget/vertical_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
-  // final String accesstoken;
   const SearchPage({Key? key}) : super(key: key);
 
   @override
@@ -15,9 +15,10 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   int selectedIndex = 0;
-
+  final SearchService _searchService = SearchService();
   final AnnonceService _annonceService = AnnonceService();
   List<Annonce> _annonces = [];
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> _loadAnnonces() async {
     try {
       List<Annonce> annonces = await _annonceService.getAnnonces();
+      print('Annonces loaded successfully.');
 
       setState(() {
         _annonces = annonces;
@@ -38,31 +40,49 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
+  Future<void> _searchAnnonces(String keyword) async {
+    try {
+              print("le mot clee $keyword");
+
+      List<Annonce> annonces = await _searchService.searchAnnonces(keyword);
+            print('Annonces sucessssssss.');
+
+      setState(() {
+        _annonces = annonces;
+      });
+    } catch (e) {
+      print('Failed to search annonces: $e');
+      // Handle error gracefully, e.g., show an error message
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: Container(
-        height: 1000,
+        height: double.infinity,
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/home1.jpg',
-              width: double.infinity, // Utilisez toute la largeur de l'écran
+              'assets/images/searchback.jpg',
+              width: double.infinity,
               height: 262.01,
-              fit: BoxFit
-                  .cover, // Assurez-vous que l'image couvre toute la hauteur
-            ),
-            const Positioned(
-              top:
-                  40, // Ajustez cette valeur pour déplacer l'AppBar vers le bas
-              left: 0,
-              right: 0,
-              child: AppBarSearch(),
+              fit: BoxFit.cover,
             ),
             Positioned(
-              top:
-                  222.01, // Ajustez cette valeur pour déplacer le conteneur vers le bas de l'image
+              top: 40,
+              left: 0,
+              right: 0,
+              child: AppBarSearch(
+                onSearch: (keyword) {
+                  _searchAnnonces(keyword);
+                },
+                searchController: _searchController,
+              ),
+            ),
+            Positioned(
+              top: 222.01,
               left: 0,
               right: 0,
               child: Container(
@@ -73,9 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                     topRight: Radius.circular(20),
                   ),
                 ),
-                height: MediaQuery.of(context).size.height -
-                    262.01 -
-                    40, // Hauteur restante de l'écran après l'image et l'AppBar
+                height: MediaQuery.of(context).size.height - 262.01 - 40,
                 child: ListView.builder(
                   itemCount: _annonces.length,
                   itemBuilder: (BuildContext context, int index) {
