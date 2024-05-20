@@ -4,6 +4,7 @@ class ScrollCardHorizontalCard extends StatefulWidget {
   const ScrollCardHorizontalCard({
     Key? key,
     required this.image,
+    required this.id,
     required this.title,
     required this.adress,
     required this.room,
@@ -11,7 +12,7 @@ class ScrollCardHorizontalCard extends StatefulWidget {
     required this.price,
   }) : super(key: key);
 
-  final String image, title, adress;
+  final String image, id ,title, adress;
   final int room, person;
   final double price;
 
@@ -27,7 +28,8 @@ class _ScrollCardHorizontalCardState extends State<ScrollCardHorizontalCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/detail');
+        Navigator.pushNamed(context, '/detail' , arguments: widget.id,
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(left: 20, top: 20 / 2),
@@ -53,7 +55,7 @@ class _ScrollCardHorizontalCardState extends State<ScrollCardHorizontalCard> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14.22),
                 image: DecorationImage(
-                  image: AssetImage(widget.image),
+                  image:  NetworkImage(widget.image),
                   fit: BoxFit.cover,
                 ),
               ),

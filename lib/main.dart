@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:binomi/features/Auth/pages/signup.dart';
 import 'package:binomi/features/Auth/services/api_auth.dart';
 import 'package:binomi/features/annonces/pages/annonce-add/add-annonce.dart';
@@ -46,23 +45,45 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {
-        '/': (context) => Home(),
-        '/login': (context) => Login(),
-        '/search': (context) => SearchPage(),
-        '/detail': (context) => AnnonceDetail(),
-        '/add_annonce': (context) => AddAnnonceForm(),
-        '/profile': (context) => UserProfile(),
-        '/settings': (context) => Settings(),
-        '/edit-profile': (context) => EditProfile(),
-        '/notifications': (context) => Notifications(),
-        '/language': (context) => Language(),
-        '/change_password': (context) => ChangePassword(),
-        '/welcome': (context) => Welcome(),
-        '/favorites': (context) => Favorite(),
-        '/signup': (context) => Signup(),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/detail') {
+          final args = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) {
+              return AnnonceDetail(annonceId: args);
+            },
+          );
+        }
 
-        // Add more routes as needed
+        // Define other routes here
+        switch (settings.name) {
+          case '/login':
+            return MaterialPageRoute(builder: (context) => Login());
+          case '/search':
+            return MaterialPageRoute(builder: (context) => SearchPage());
+          case '/add_annonce':
+            return MaterialPageRoute(builder: (context) => AddAnnonceForm());
+          case '/profile':
+            return MaterialPageRoute(builder: (context) => UserProfile());
+          case '/settings':
+            return MaterialPageRoute(builder: (context) => Settings());
+          case '/edit-profile':
+            return MaterialPageRoute(builder: (context) => EditProfile());
+          case '/notifications':
+            return MaterialPageRoute(builder: (context) => Notifications());
+          case '/language':
+            return MaterialPageRoute(builder: (context) => Language());
+          case '/change_password':
+            return MaterialPageRoute(builder: (context) => ChangePassword());
+          case '/welcome':
+            return MaterialPageRoute(builder: (context) => Welcome());
+          case '/favorites':
+            return MaterialPageRoute(builder: (context) => Favorite());
+          case '/signup':
+            return MaterialPageRoute(builder: (context) => Signup());
+          default:
+            return MaterialPageRoute(builder: (context) => Home());
+        }
       },
     );
   }

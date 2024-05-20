@@ -9,7 +9,7 @@ import '../models/annonce.dart';
 import 'dart:io';
 
 class AnnonceService {
-  static const String apiUrl = 'http://localhost:3000/annonces';
+  static const String apiUrl = 'http://10.0.2.2:3000/annonces';
 
   Future<List<Annonce>> getAnnonces() async {
     final response = await http.get(Uri.parse(apiUrl));
@@ -23,11 +23,17 @@ class AnnonceService {
 
   Future<Annonce> getAnnonceById(String id) async {
     final response = await http.get(Uri.parse('$apiUrl/$id'));
-
+    print("the id $id");
     if (response.statusCode == 200) {
-      return Annonce.fromJson(jsonDecode(response.body));
+      try {
+        final Map<String, dynamic> json = jsonDecode(response.body);
+        return Annonce.fromJson(json);
+      } catch (e) {
+        throw Exception('Failed to parse annonce: $e');
+      }
     } else {
-      throw Exception('Failed to load annonce');
+      throw Exception(
+          'Failed to load annonce with status code ${response.statusCode}');
     }
   }
 

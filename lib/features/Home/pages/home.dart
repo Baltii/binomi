@@ -152,7 +152,8 @@ class _HomeState extends State<Home> {
             child: Row(
               children: _annonces.map((annonce) {
                 return ScrollCardHorizontalCard(
-                  image: 'assets/images/home1.jpg',
+                  image:'http://10.0.2.2:3000/annonces/images/${annonce.photo[0]}',
+                  id:annonce.id,
                   title: annonce.title,
                   adress: annonce.location,
                   room: annonce.roomNumber,

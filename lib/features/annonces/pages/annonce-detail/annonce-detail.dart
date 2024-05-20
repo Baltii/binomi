@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:binomi/features/annonces/models/annonce.dart';
+import 'package:binomi/features/annonces/services/api_annonce.dart';
 
 class AnnonceDetail extends StatefulWidget {
-  const AnnonceDetail({Key? key}) : super(key: key);
+  final String annonceId;
+
+  const AnnonceDetail({Key? key, required this.annonceId}) : super(key: key);
 
   @override
   State<AnnonceDetail> createState() => _AnnonceDetailState();
@@ -11,16 +15,36 @@ class AnnonceDetail extends StatefulWidget {
 class _AnnonceDetailState extends State<AnnonceDetail> {
   int selectedIndex = 0;
   bool isFavorite = false;
-  List imageList = [
-    {"id": 1, "image_path": 'assets/images/home1.jpg'},
-    {"id": 2, "image_path": 'assets/images/home2.jpg'},
-    {"id": 3, "image_path": 'assets/images/backgroundApp.png'},
-    {"id": 4, "image_path": 'assets/images/home2.jpg'},
-    {"id": 5, "image_path": 'assets/images/home1.jpg'},
-  ];
+  Annonce? annonce;
+
   final CarouselController carouselController = CarouselController();
+  final AnnonceService _annonceService = AnnonceService();
 
   int currentIndex = 0;
+
+  Future<void> _loadAnnonceDetails() async {
+    try {
+      Annonce fetchedAnnonce =
+          await _annonceService.getAnnonceById(widget.annonceId);
+      setState(() {
+        annonce = fetchedAnnonce;
+      });
+      // Afficher l'ID dans la console
+      print('Annonce ID: ${fetchedAnnonce.id}');
+      for (String image in fetchedAnnonce.photo) {
+        print('Image URL: $image');
+      }
+    } catch (e) {
+      print('Failed to load annonce: $e');
+      // Show an error message to the user or handle it gracefully
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAnnonceDetails();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,104 +54,105 @@ class _AnnonceDetailState extends State<AnnonceDetail> {
           children: [
             Stack(
               children: [
-                CarouselSlider(
-                  items: imageList
-                      .map(
-                        (item) => Image.asset(
-                          item['image_path'],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      )
-                      .toList(),
-                  carouselController: carouselController,
-                  options: CarouselOptions(
-                    scrollPhysics: const BouncingScrollPhysics(),
-                    autoPlay: true,
-                    height: 500,
-                    aspectRatio: 2,
-                    viewportFraction: 1,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        currentIndex = index;
-                      });
-                    },
-                  ),
-                ),
-                Positioned(
-                  top: 17,
-                  left: 2,
-                  right: 2,
-                  child: Container(
-                    color: Colors.transparent, // Couleur de fond de l'app bar
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildIconButton(
-                          icon: Icons.arrow_back_ios,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const Text(
-                          'Detail',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        _buildIconButton(
-                          icon: isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          onPressed: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: imageList.asMap().entries.map((entry) {
-                      return GestureDetector(
-                        onTap: () =>
-                            carouselController.animateToPage(entry.key),
-                        child: Container(
-                          width: currentIndex == entry.key ? 40 : 6,
-                          height: 6.0,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 3.0,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: currentIndex == entry.key
-                                ? const Color(0xffF5F5F5)
-                                : const Color.fromARGB(129, 238, 238, 238),
-                          ),
-                        ),
+                if (annonce != null)
+                  CarouselSlider(
+                    items: annonce!.photo.map((imageName) {
+                      return Image.network(
+                        'http://10.0.2.2:3000/annonces/images/$imageName',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
                       );
                     }).toList(),
+                    carouselController: carouselController,
+                    options: CarouselOptions(
+                      scrollPhysics: const BouncingScrollPhysics(),
+                      autoPlay: true,
+                      height: 500,
+                      aspectRatio: 2,
+                      viewportFraction: 1,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          currentIndex = index;
+                        });
+                      },
+                    ),
                   ),
-                ),
+                if (annonce != null)
+                  Positioned(
+                    top: 17,
+                    left: 2,
+                    right: 2,
+                    child: Container(
+                      color: Colors.transparent, // Couleur de fond de l'app bar
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildIconButton(
+                            icon: Icons.arrow_back_ios,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const Text(
+                            'Detail',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          _buildIconButton(
+                            icon: isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            onPressed: () {
+                              setState(() {
+                                isFavorite = !isFavorite;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (annonce != null)
+                  Positioned(
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: annonce!.photo.asMap().entries.map((entry) {
+                        return GestureDetector(
+                          onTap: () =>
+                              carouselController.animateToPage(entry.key),
+                          child: Container(
+                            width: currentIndex == entry.key ? 40 : 6,
+                            height: 6.0,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 3.0,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: currentIndex == entry.key
+                                  ? const Color(0xffF5F5F5)
+                                  : const Color.fromARGB(129, 238, 238, 238),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 10), // Espace pour ajouter du contenu
             // Ajoutez votre contenu ici, par exemple :
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Text(
-                'House S+2 for Students (Girls)',
-                style: TextStyle(
+                annonce?.title ?? '',
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
                 ),
@@ -135,281 +160,233 @@ class _AnnonceDetailState extends State<AnnonceDetail> {
             ),
             const SizedBox(height: 10), // Espace pour ajouter du contenu
             // Ajoutez votre contenu ici, par exemple :
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              right: 5), // Ajout de padding à droite
-                          child:
-                              Icon(Icons.star, color: Colors.yellow), // Icône
-                        ),
-                        Text(
-                          "4.8 (66 reviews)",
-                          style: TextStyle(color: Color(0xff7D7F88)),
-                        ), // Texte
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              right: 5), // Ajout de padding à droite
-                          child:
-                              Icon(Icons.location_on, color: Color(0xff7D7F88)),
-                        ),
-                        // Icône
-                        Text(
-                          "Tunis, Tunisia",
-                          style: TextStyle(color: Color(0xff7D7F88)),
-                        ), // Texte
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(width: 30),
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              right: 5), // Ajout de padding à droite
-                          child: Icon(Icons.hotel,
-                              color: Color(0xff7D7F88)), // Icône
-                        ),
-                        Text(
-                          "2 room",
-                          style: TextStyle(color: Color(0xff7D7F88)),
-                        ), // Texte
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              right: 5), // Ajout de padding à droite
-                          child: Icon(Icons.person,
-                              color: Color(0xff7D7F88)), // Icône
-                        ),
-                        Text(
-                          "4 person",
-                          style: TextStyle(color: Color(0xff7D7F88)),
-                        ), // Texte
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            if (annonce != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      const Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                right: 5), // Ajout de padding à droite
+                            child:
+                                Icon(Icons.star, color: Colors.yellow), // Icône
+                          ),
+                          Text(
+                            "4.8 (66 reviews)",
+                            style: TextStyle(color: Color(0xff7D7F88)),
+                          ), // Texte
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(
+                                right: 5), // Ajout de padding à droite
+                            child: Icon(Icons.location_on,
+                                color: Color(0xff7D7F88)),
+                          ),
+                          // Icône
+                          Text(
+                            annonce?.location ?? '',
+                            style: const TextStyle(color: Color(0xff7D7F88)),
+                          ), // Texte
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 30),
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(
+                                right: 5), // Ajout de padding à droite
+                            child: Icon(Icons.hotel,
+                                color: Color(0xff7D7F88)), // Icône
+                          ),
+                          Text(
+                            '${annonce?.roomNumber ?? 0} room',
+                            style: const TextStyle(color: Color(0xff7D7F88)),
+                          ), // Texte
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(
+                                right: 5), // Ajout de padding à droite
+                            child: Icon(Icons.person,
+                                color: Color(0xff7D7F88)), // Icône
+                          ),
+                          Text(
+                            '${annonce?.placeInRoom ?? 0} person',
+                            style: const TextStyle(color: Color(0xff7D7F88)),
+                          ), // Texte
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             const SizedBox(height: 40), // Espace pour ajouter du contenu
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal:
-                          10.0), // Ajouter un margin à gauche de l'image
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(23.69),
-                    child: const Image(
-                      image: AssetImage('assets/images/moi3.jpg'),
-                      fit: BoxFit.cover,
-                      width: 47.39,
-                      height: 47.39,
+            if (annonce != null)
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal:
+                            10.0), // Ajouter un margin à gauche de l'image
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(23.69),
+                      child: const Image(
+                        image: AssetImage('assets/images/moi3.jpg'),
+                        fit: BoxFit.cover,
+                        width: 47.39,
+                        height: 47.39,
+                      ),
                     ),
                   ),
-                ),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Mayssa Ben Fredj",
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
-                    ),
-                    Text(
-                      "Property owner",
-                      style: TextStyle(fontSize: 10, color: Color(0xff7D7F88)),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xff33A5E5).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(14.22),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Mayssa Ben Fredj",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        "Property owner",
+                        style:
+                            TextStyle(fontSize: 10, color: Color(0xff7D7F88)),
+                      ),
+                    ],
                   ),
-                  padding: const EdgeInsets.all(8),
-                  margin: const EdgeInsets.only(right: 20),
-                  child: const Icon(Icons.phone, color: Color(0xff33A5E5)),
-                )
-              ],
-            ),
+                  const Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff33A5E5).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(14.22),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.only(right: 20),
+                    child: const Icon(Icons.phone, color: Color(0xff33A5E5)),
+                  )
+                ],
+              ),
             const SizedBox(height: 20), // Espace pour ajouter du contenu
-
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    "Home facilities",
-                    style: TextStyle(
-                        color: Colors.black,
+            if (annonce != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      "Home facilities",
+                      style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(height: 20), // Espace pour ajouter du contenu
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10), // Ajout de padding à droite
-                      child: Icon(Icons.car_crash,
-                          color: Color(0xff7D7F88)), // Icône
-                    ),
-                    Text(
-                      "Free parking",
-                      style: TextStyle(color: Color(0xff7D7F88)),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10), // Espace pour ajouter du contenu
-
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10), // Ajout de padding à droite
-                      child: Icon(Icons.air, color: Color(0xff7D7F88)), // Icône
-                    ),
-                    Text(
-                      "Air conditioner",
-                      style: TextStyle(color: Color(0xff7D7F88)),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10), // Espace pour ajouter du contenu
-
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10), // Ajout de padding à droite
-                      child:
-                          Icon(Icons.wifi, color: Color(0xff7D7F88)), // Icône
-                    ),
-                    Text(
-                      "Free wifi",
-                      style: TextStyle(color: Color(0xff7D7F88)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10), // Espace pour ajouter du contenu
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Adress ",
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                SizedBox(height: 10), // Espace pour ajouter du contenu
-                Text(
-                  "Cité olympique Rades , ben Arouss",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xff7D7F88),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 17), // Espace pour ajouter du contenu
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20), // Espace pour ajouter du contenu
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    "Nearest public facilities",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-
-                SizedBox(height: 10), // Espace pour ajouter du contenu
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10), // Ajout de padding à droite
-                      child: Icon(Icons.shopify, color: Color(0xff7D7F88)),
-                    ),
-                    // Icône
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Minimarket",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: annonce!.homeFacilities.map((facility) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Icon(
+                                Icons.circle_outlined,
+                                color: Color(0xff7D7F88),
+                                size: 8,
+                              ),
+                            ),
+                            Text(
+                              facility,
+                              style: const TextStyle(color: Color(0xff7D7F88)),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "200m",
-                          style: TextStyle(
-                              color: Color(0xff7D7F88),
-                              fontWeight: FontWeight.bold),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      "Nearest public facilities",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: annonce!.nearest.map((facility) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Icon(
+                                Icons.circle_outlined,
+                                color: Color(0xff7D7F88),
+                                size: 8,
+                              ),
+                            ),
+                            Text(
+                              facility,
+                              style: const TextStyle(color: Color(0xff7D7F88)),
+                            ),
+                          ],
                         ),
-                      ],
-                    )
-                    // Texte
-                  ],
-                )
-              ],
-            ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
             const SizedBox(height: 27), // Espace pour ajouter du contenu
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20), // Espace pour ajouter du contenu
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    "About location’s neighborhood",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+            if (annonce != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20), // Espace pour ajouter du contenu
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      "About location’s neighborhood",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 10), // Espace pour ajouter du contenu
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      annonce?.description ?? '',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff7D7F88),
+                      ),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
+                ],
+              )
 
-                SizedBox(height: 10), // Espace pour ajouter du contenu
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    "The house is located in a quiet area, close to all amenities, and is suitable for students. It is a 5-minute walk from the Faculty of Sciences of Tunis and the Faculty of Medicine. The house is fully furnished and equipped. It has 2 bedrooms, a living room, a kitchen, a bathroom, and a terrace. The house is located in a quiet area, close to all amenities, and is suitable for students. It is a 5-minute walk from the Faculty of Sciences of Tunis and the Faculty of Medicine. The house is fully furnished and equipped. It has 2 bedrooms, a living room, a kitchen, a bathroom, and a terrace.",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xff7D7F88),
-                    ),
-                    textAlign: TextAlign.justify,
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),

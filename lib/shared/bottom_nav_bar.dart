@@ -12,29 +12,26 @@ class BottomNavigationBarWidget extends StatefulWidget {
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
-  // Définissez une liste d'URL correspondant à chaque icône
-  final List<String> _navigationUrls = ['/', '/search', '/favorites', '/profile'];
+  final List<String> _navigationUrls = [
+    '/',
+    '/search',
+    '/favorites',
+    '/profile'
+  ];
+  int selectedIndex = 0;
 
-  // Méthode pour changer l'index sélectionné
   void selectIndex(int index) {
     setState(() {
       selectedIndex = index;
     });
-
-    // Récupérez l'URL correspondant à l'index sélectionné
     String selectedRoute = _navigationUrls[index];
-
-    // Naviguez vers l'URL correspondante
-    Navigator.pushNamed(context, selectedRoute);
+    Navigator.pushNamedAndRemoveUntil(context, selectedRoute, (route) => false);
+    widget.onIndexChanged(index);
   }
-
-  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    // Obtenez l'URL actuelle
-    String currentRoute = ModalRoute.of(context)!.settings.name!;
-
+    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -58,7 +55,6 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   Widget buildNavItem(IconData icon, int index, String currentRoute) {
     final isSelected = _navigationUrls[index] == currentRoute;
-
     return GestureDetector(
       onTap: () {
         selectIndex(index);
